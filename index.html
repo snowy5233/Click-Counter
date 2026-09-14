@@ -31,6 +31,33 @@
       font-weight: 500;
     }
 
+    .multiplier-label {
+      margin: 1.5rem 0 0.5rem;
+      font-size: 0.85rem;
+      opacity: 0.85;
+      letter-spacing: 0.03em;
+    }
+
+    .multipliers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .multipliers button {
+      padding: 0.5rem 0.9rem;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.85);
+      color: #2575fc;
+    }
+
+    .multipliers button.active {
+      background: #2575fc;
+      color: #fff;
+    }
+
     .count {
       font-size: 5rem;
       font-weight: 700;
@@ -39,7 +66,13 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
-    button {
+    .per-click {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin-bottom: 1.25rem;
+    }
+
+    #clickBtn {
       border: none;
       border-radius: 0.75rem;
       padding: 1rem 2.5rem;
@@ -52,11 +85,11 @@
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     }
 
-    button:hover {
+    #clickBtn:hover {
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
-    button:active {
+    #clickBtn:active {
       transform: scale(0.94);
     }
 
@@ -69,6 +102,8 @@
       font-size: 0.9rem;
       font-weight: 500;
       box-shadow: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
     }
 
     .reset:hover {
@@ -79,7 +114,10 @@
 <body>
   <div class="card">
     <h1>Click Counter</h1>
+    <div class="multiplier-label">Multiplier per click</div>
+    <div class="multipliers" id="multipliers"></div>
     <div class="count" id="count">0</div>
+    <div class="per-click">+<span id="perClick">1</span> per click</div>
     <button id="clickBtn">Click me</button>
     <br />
     <button class="reset" id="resetBtn">Reset</button>
@@ -87,19 +125,37 @@
 
   <script>
     const countEl = document.getElementById('count');
+    const perClickEl = document.getElementById('perClick');
     const clickBtn = document.getElementById('clickBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const multipliersEl = document.getElementById('multipliers');
 
+    const multiplierValues = [1, 2, 5, 10, 25, 50, 100, 500, 1000];
     let count = 0;
+    let multiplier = 1;
+
+    multiplierValues.forEach((value) => {
+      const btn = document.createElement('button');
+      btn.textContent = value + 'x';
+      btn.dataset.multiplier = value;
+      if (value === 1) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        multiplier = value;
+        perClickEl.textContent = multiplier;
+        [...multipliersEl.children].forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      multipliersEl.appendChild(btn);
+    });
 
     clickBtn.addEventListener('click', () => {
-      count += 1;
-      countEl.textContent = count;
+      count += multiplier;
+      countEl.textContent = count.toLocaleString();
     });
 
     resetBtn.addEventListener('click', () => {
       count = 0;
-      countEl.textContent = count;
+      countEl.textContent = count.toLocaleString();
     });
   </script>
 </body>
